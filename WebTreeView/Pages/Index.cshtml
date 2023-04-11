@@ -1,0 +1,35 @@
+﻿@page
+@using WebTreeView.Models
+@model WebTreeView.Pages.IndexModel
+@{
+    ViewData["Title"] = "tree view page";
+}
+
+<div class="text-center">
+  @{ void   TreeView(List<Item> itemTree)
+{
+    foreach (var item in itemTree)
+    {
+            <li>
+                @if (item.Children != null)
+        {
+                    <span>@item.Name</span>
+                            <ul>
+                                @{TreeView(item.Children);}
+                    </ul>
+        }
+        else
+        {
+                    <span>@item.Name</span> 
+        }
+            </li>
+    }
+}
+}
+
+<ul>
+@{TreeView(Model.Items);}
+</ul>
+    
+
+</div>
