@@ -1,4 +1,4 @@
-﻿using Catalog.Models;
+using Catalog.Models;
 using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
@@ -6,6 +6,7 @@ using System.Globalization;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Catalog // Note: actual namespace depends on the project name.
 {
@@ -22,8 +23,8 @@ namespace Catalog // Note: actual namespace depends on the project name.
             };
             try
             {
-                var products = GetProducts("data\\Products.csv", config);
-                var categories = GetCategories("data\\Categories.csv", config);
+                var products = GetProducts("data/Products.csv", config);
+                var categories = GetCategories("data/Categories.csv", config);
 
                 var results = (from c in categories
                               
@@ -31,9 +32,15 @@ namespace Catalog // Note: actual namespace depends on the project name.
                               { Id=c.Id, Name=c.Name, Description = c.Description, Products= GetCategoryProducts(products,c.Id) }).ToList();
 
                 var jsonString = JsonSerializer.Serialize(results, _options);
-                File.WriteAllText("..\\..\\..\\data\\catalog_1.json", jsonString);
-
-
+                File.WriteAllText("../../../data/catalog_1.json", jsonString);
+                // writing xml
+                using (var stringwriter = new System.IO.StringWriter())
+                {
+                    var serializer = new XmlSerializer(results.GetType());
+                    serializer.Serialize(stringwriter, results);
+                    File.WriteAllText("../../../data/catalog_1.xml", stringwriter.ToString());
+                    
+                }
                 Console.WriteLine("Json & XML files are generated sucuessfully! Press any key to close");
                 Console.ReadLine();
                 //return;
